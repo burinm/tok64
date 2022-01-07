@@ -1,6 +1,8 @@
 #define MAXFNAME 13
 #define CHNULL ((char *) 0)
 
+#include <string.h>
+
 char program [MAXFNAME];
 
 void get_prog_name (char *path)

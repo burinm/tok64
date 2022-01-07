@@ -2,9 +2,12 @@
    #define MAXLINE 200
 #endif
 
+#include <stdio.h>
+#include <string.h>
+
 char line [MAXLINE];
 
-int getline (char *line, int max, FILE *infile)
+int getline2 (char *line, int max, FILE *infile)
 {
    int i;
 

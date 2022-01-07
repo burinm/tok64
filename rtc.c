@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 void rtc (FILE *screen)
 {
    fflush (stdin);

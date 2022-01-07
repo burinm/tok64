@@ -12,18 +12,27 @@
 
    6/14/96. Merged basic extensions from what would have been v2.0
    with v1.3 to make v1.4. GUI interface will have to wait.
+
+   burin
+   1/6/22. Port to Linux
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-#define MAXLINE 402
+// TODO: proper header files
+// I also suspect that many of these functions are available in modern C
+extern char program[];
+extern char line [];
+extern int getline2 (char *line, int max, FILE *infile);
+extern int extension (char *path, char *ext, int max);
+extern void get_prog_name (char *path);
+extern void rtc (FILE *screen);
+extern int basename (char *path, char *base, int max);
 
-#include "\c\lib\getprog.h"
-#include "\c\lib\getline.h"
-#include "\c\lib\basename.h"
-#include "\c\lib\rtc.h"
+#define MAXLINE 402
 
 #define PROGNAME "TOK64"
 #define VERSION "1.4"
@@ -75,7 +84,7 @@
 #define MAXDECIM 4
 #define COMT_TOKEN 0x8F
 #define COMT_WORD "rem"
-#define CLEAR_WORD "{clear}"
+#define CLEAR_WORD "{clr}"
 #define SPACE 0x20
 #define SPACE_RPT 4
 
@@ -203,24 +212,40 @@ Keyword_type keywords [] =
 
 Keyword_type special [] =
 {
-   CLEAR_WORD, 0x93,     "{home}", 0x13,
-   "{right}", 0x1D,      "{left}", 0x9D,
-   "{up}", 0x91,         "{down}", 0x11,
-   "{reverse on}", 0x12, "{reverse off}", 0x92,
-   "{black}", 0x90,      "{white}", 0x05,
-   "{red}", 0x1C,        "{cyan}", 0x9F,
-   "{purple}", 0x9C,     "{green}", 0x1E,
-   "{blue}", 0x1F,       "{yellow}", 0x9E,
-   "{orange}", 0x81,     "{brown}", 0x95,
-   "{pink}", 0x96,       "{dark gray}", 0x97,
-   "{gray}", 0x98,       "{light green}", 0x99,
-   "{light blue}", 0x9A, "{light gray}", 0x9B,
-	 "{f1}", 0x85,         "{f2}", 0x89,
-	 "{f3}", 0x86,         "{f4}", 0x8A,
-	 "{f5}", 0x87,         "{f6}", 0x8B,
-	 "{f7}", 0x88,         "{f8}", 0x8C,
-   "{space}", SPACE,
-   "", 0
+    CLEAR_WORD, 0x93,
+    "{home}", 0x13,
+    "{rght}", 0x1D,
+    "{left}", 0x9D,
+    "{up}", 0x91,
+    "{down}", 0x11,
+    "{rvon}", 0x12,
+    "{rvof}", 0x92,
+    "{blk}", 0x90,
+    "{wht}", 0x05,
+    "{red}", 0x1C,
+    "{cyn}", 0x9F,
+    "{pur}", 0x9C,
+    "{grn}", 0x1E,
+    "{blu}", 0x1F,
+    "{yel}", 0x9E,
+    "{orna}", 0x81,
+    "{brn}", 0x95,
+    "{pin}", 0x96,
+    "{gry1}", 0x97,
+    "{gry2}", 0x98, 
+    "{lgrn}", 0x99,
+    "{lblu}", 0x9A,
+    "{gry3}", 0x9B,
+    "{f1}", 0x85,
+    "{f2}", 0x89,
+    "{f3}", 0x86,
+    "{f4}", 0x8A,
+    "{f5}", 0x87,
+    "{f6}", 0x8B,
+    "{f7}", 0x88,
+    "{f8}", 0x8C,
+    "{space}", SPACE,
+    "", 0
 };
 
 
@@ -444,7 +469,7 @@ int get_times (char *string, int start, int max, int *stop)
 }
 
 
-void exit_illeg_subs (line_num, col)
+void exit_illeg_subs (unsigned int line_num, int col)
 {
    fprintf (stderr, "\n%s: Illegal quoted substitution line %u col %d.\n",
       program, line_num, col + 1);
@@ -682,7 +707,7 @@ void txt2prg (FILE *in, FILE *out, int casemode, int colmode)
    tokenize (BASREC_NULL, CH_NULL, TRUE, FALSE);
    start_prg (out);
 
-   while (getline (line, MAXLINE, in) != EOF)
+   while (getline2 (line, MAXLINE, in) != EOF)
    {
       if (colmode)
 			{
@@ -752,7 +777,7 @@ void process_mult (FILE *in, int overwrite, int casemode, int colmode)
    char file_out [MAXPATH], casetext [MAXLINE], fext [MAXEXT];
    FILE *out;
 
-   while (getline (line, MAXLINE, in) != EOF)
+   while (getline2 (line, MAXLINE, in) != EOF)
    {
       i = 0;
       eol = strlen (line);

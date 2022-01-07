@@ -1,3 +1,5 @@
+#include <string.h>
+
 int basename (char *path, char *base, int max)
 {
    int i, stop;
