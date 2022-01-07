@@ -114,15 +114,16 @@ wait
 
 
 These are the valid special substitions for TOK64:
+(1/6/2022) - special substitutions changed to to match petcat from vice 3.4
 
-{clear}             {home}              {right}
+{clr}               {home}              {rght}
 {left}              {up}                {down}
-{reverse on}        {reverse off}       {black}
-{white}             {red}               {cyan}
-{purple}            {green}             {blue}
-{yellow}            {orange}            {brown}
-{pink}              {dark gray}         {gray}
-{light green}       {light blue}        {light gray}
+{rvon}              {rvof}              {blk}
+{wht}               {red}               {cyn}
+{pur}               {grn}               {blu}
+{yel}               {orna}              {brn}
+{pin}               {gry1}              {gry2}
+{lgrn}              {lblu}              {gry3}
 {f1}                {f2}                {f3}
 {f4}                {f5}                {f6}
 {f7}                {f8}                {space}
